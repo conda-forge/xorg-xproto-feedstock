@@ -16,7 +16,7 @@ source:
     - windows-fd_bits.patch  # [win]
 
 build:
-  number: 0
+  number: 1
   detect_binary_files_with_prefix: true
 
 requirements:
@@ -26,6 +26,7 @@ requirements:
     - pkg-config  # [not win]
     - posix  # [win]
     - toolchain
+    - xorg-util-macros
 
 test:
   commands:
