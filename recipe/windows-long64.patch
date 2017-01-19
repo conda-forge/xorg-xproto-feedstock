@@ -1,0 +1,32 @@
+--- Xwinsock.h.orig	2017-01-19 10:23:40.556270706 -0500
++++ Xwinsock.h	2017-01-19 13:34:04.728297469 -0500
+@@ -39,6 +39,16 @@
+ # undef XFree86Server
+ #endif
+ 
++/* Xmd.h defines LONG64 (with no expansion) if a 'long' is 64-bits,
++ * so we need to jump through some extra hoops to be consistent and
++ * not name-clash with the Windows LONG64 type.
++ */
++#ifdef LONG64
++#define __xwinsock_long64_was_defined
++#undef LONG64
++#endif
++#define LONG64 wLONG64
++
+ /*
+  * mingw-w64 headers define BOOL as a typedef, protecting against macros
+  * mingw.org headers define BOOL in terms of WINBOOL
+@@ -64,6 +74,12 @@
+ #undef RT_FONT
+ #undef RT_CURSOR
+ 
++#undef LONG64
++#ifdef __xwinsock_long64_was_defined
++#define LONG64
++#undef __xwinsock_long64_was_defined
++#endif 
++
+ /*
+  * Older version of this header used to name the windows API bool type wBOOL,
+  * rather than more standard name WINBOOL
