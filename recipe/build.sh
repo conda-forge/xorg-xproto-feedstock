@@ -7,10 +7,12 @@ IFS=$' \t\n' # workaround for conda 4.2.13+toolchain bug
 [ -n "$PATH_OVERRIDE" ] && export PATH="$PATH_OVERRIDE"
 
 # On Windows we want $LIBRARY_PREFIX in "mixed" (C:/Conda/...) form, not $PREFIX
-if [ -n "$LIBRARY_PREFIX" ] ; then
-    useprefix="$LIBRARY_PREFIX"
+if [ -n "$LIBRARY_PREFIX_M" ] ; then
+    mprefix="$LIBRARY_PREFIX_M"
+    uprefix="$LIBRARY_PREFIX_U"
 else
-    useprefix="$PREFIX"
+    mprefix="$PREFIX"
+    uprefix="$PREFIX"
 fi
 
 # On Windows we need to regenerate the configure scripts.
@@ -21,15 +23,15 @@ if [ -n "$VS_MAJOR" ] ; then
     autoreconf_args=(
         --force
         --install
-        -I "$useprefix/share/aclocal"
-        -I "$useprefix/mingw-w64/share/aclocal" # note: this is correct for win32 also!
+        -I "$mprefix/share/aclocal"
+        -I "$mprefix/mingw-w64/share/aclocal" # note: this is correct for win32 also!
     )
     autoreconf "${autoreconf_args[@]}"
 fi
 
-export PKG_CONFIG_LIBDIR=$useprefix/lib/pkgconfig:$useprefix/share/pkgconfig
+export PKG_CONFIG_LIBDIR=$uprefix/lib/pkgconfig:$uprefix/share/pkgconfig
 configure_args=(
-    --prefix=$useprefix
+    --prefix=$mprefix
     --disable-dependency-tracking
     --disable-selective-werror
     --disable-silent-rules
@@ -39,4 +41,4 @@ make -j$CPU_COUNT
 make install
 make check
 
-rm -rf $useprefix/share/doc/${PKG_NAME#xorg-}
+rm -rf $uprefix/share/doc/${PKG_NAME#xorg-}
