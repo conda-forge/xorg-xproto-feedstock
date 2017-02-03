@@ -3,14 +3,32 @@
 set -e
 IFS=$' \t\n' # workaround for conda 4.2.13+toolchain bug
 
-# Fresh OS-guessing scripts from xorg-util-macros for win64
-for f in config.guess config.sub ; do
-    cp -p $PREFIX/share/util-macros/$f .
-done
+# Adopt a Unix-friendly path if we're on Windows (see bld.bat).
+[ -n "$PATH_OVERRIDE" ] && export PATH="$PATH_OVERRIDE"
 
-export PKG_CONFIG_LIBDIR=$PREFIX/lib/pkgconfig:$PREFIX/share/pkgconfig
+# On Windows we want $LIBRARY_PREFIX in "mixed" (C:/Conda/...) form, not $PREFIX
+if [ -n "$LIBRARY_PREFIX" ] ; then
+    useprefix="$LIBRARY_PREFIX"
+else
+    useprefix="$PREFIX"
+fi
+
+# On Windows we need to regenerate the configure scripts.
+if [ -n "$VS_MAJOR" ] ; then
+    am_version=1.15 # keep sync'ed with meta.yaml
+    export ACLOCAL=aclocal-$am_version
+    export AUTOMAKE=automake-$am_version
+    autoreconf_args=(
+        --force
+        --install
+        -I "$useprefix/mingw-w64/share/aclocal" # note: this is correct for win32 also!
+    )
+    autoreconf "${autoreconf_args[@]}"
+fi
+
+export PKG_CONFIG_LIBDIR=$useprefix/lib/pkgconfig:$useprefix/share/pkgconfig
 configure_args=(
-    --prefix=$PREFIX
+    --prefix=$useprefix
     --disable-dependency-tracking
     --disable-selective-werror
     --disable-silent-rules
@@ -19,4 +37,5 @@ configure_args=(
 make -j$CPU_COUNT
 make install
 make check
-rm -rf $PREFIX/share/doc/${PKG_NAME#xorg-}
+
+rm -rf $useprefix/share/doc/${PKG_NAME#xorg-}
