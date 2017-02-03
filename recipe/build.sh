@@ -21,6 +21,7 @@ if [ -n "$VS_MAJOR" ] ; then
     autoreconf_args=(
         --force
         --install
+        -I "$useprefix/share/aclocal"
         -I "$useprefix/mingw-w64/share/aclocal" # note: this is correct for win32 also!
     )
     autoreconf "${autoreconf_args[@]}"
