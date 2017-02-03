@@ -38,7 +38,7 @@ about:
   license: MIT
   license_family: MIT
   license_file: COPYING
-  summary: 'Definitions for the core X Windows protocol.'
+  summary: 'Core X Windows C prototypes.'
 
 extra:
   recipe-maintainers:
