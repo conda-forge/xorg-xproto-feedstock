@@ -15,10 +15,10 @@ source:
   sha256: {{ sha256 }}
   patches:
     - windows-fd_bits.patch  # [win]
-    - windows-Xwinsock.patch  # [win]
+    - windows-64bit.patch  # [win]
 
 build:
-  number: 5
+  number: 6
   detect_binary_files_with_prefix: true
 
 requirements:
