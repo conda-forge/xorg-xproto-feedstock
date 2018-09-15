@@ -18,7 +18,7 @@ source:
     - windows-64bit.patch  # [win]
 
 build:
-  number: 7
+  number: 1007
   detect_binary_files_with_prefix: true
 
 requirements:
