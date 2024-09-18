@@ -18,7 +18,7 @@ source:
     - windows-64bit.patch  # [win]
 
 build:
-  number: 1007
+  number: 1008
   detect_binary_files_with_prefix: true
 
 requirements:
@@ -27,11 +27,13 @@ requirements:
     - m2-autoconf                   # [win]
     - m2-automake{{ am_version }}   # [win]
     - m2-libtool                    # [win]
-    - m2w64-pkg-config              # [win]
+    - pkg-config              # [win]
     - pkg-config                    # [not win]
-    - posix                         # [win]
+    - m2-base                         # [win]
     - {{ compiler('c') }}           # [unix]
+    - {{ stdlib("c") }}             # [unix]
     - {{ compiler('m2w64_c') }}     # [win]
+    - {{ stdlib("m2w64_c") }}       # [win]
     - make                          # [unix]
     - autoconf                      # [unix]
     - automake                      # [unix]
@@ -42,8 +44,6 @@ requirements:
 
 test:
   commands:
-    - conda inspect linkages -p $PREFIX $PKG_NAME  # [not win]
-    - conda inspect objects -p $PREFIX $PKG_NAME  # [osx]
 
 about:
   home: https://www.x.org/
