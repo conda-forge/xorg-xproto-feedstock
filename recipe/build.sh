@@ -1,10 +1,11 @@
 #! /bin/bash
-# Get an updated config.sub and config.guess
-cp $BUILD_PREFIX/share/gnuconfig/config.* .
 
-set -e
-set -x
-IFS=$' \t\n' # workaround for conda 4.2.13+toolchain bug
+set -xe
+
+if [[ "${target_platform:-}" != win-* ]]; then
+  # Get an updated config.sub and config.guess
+  cp $BUILD_PREFIX/share/gnuconfig/config.* .
+fi
 
 # Adopt a Unix-friendly path if we're on Windows (see bld.bat).
 [ -n "$PATH_OVERRIDE" ] && export PATH="$PATH_OVERRIDE"
@@ -24,7 +25,11 @@ else
 fi
 
 # On Windows we need to regenerate the configure scripts.
-if [ -n "$CYGWIN_PREFIX" ] ; then
+if [[ "${target_platform:-}" == "win-arm64" ]]; then
+    # X11 headers use WIN32, while MSVC-target Clang defines only _WIN32.
+    export CPPFLAGS="$CPPFLAGS -DWIN32"
+    autoreconf -vfi -I "$PREFIX/share/aclocal" -I "$BUILD_PREFIX/Library/usr/share/aclocal"
+elif [ -n "$CYGWIN_PREFIX" ] ; then
     am_version=1.15 # keep sync'ed with meta.yaml
     export ACLOCAL=aclocal-$am_version
     export AUTOMAKE=automake-$am_version
@@ -60,6 +65,12 @@ configure_args=(
     --disable-silent-rules
 )
 ./configure "${configure_args[@]}"
+
+# This should go here, but this proto package doesn't actually use libtool.
+### if [[ "${target_platform:-}" == "win-arm64" ]]; then
+###     patch_libtool
+### fi
+
 make -j$CPU_COUNT
 make install
 if [[ "${CONDA_BUILD_CROSS_COMPILATION:-}" != "1" || "${CROSSCOMPILING_EMULATOR:-}" != "" ]]; then

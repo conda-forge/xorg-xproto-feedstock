@@ -1,3 +1,5 @@
+if /I "%target_platform%"=="win-arm64" goto win_arm64
+
 :: Trailing semicolon in this variable as set by current (2017/01)
 :: conda-build breaks us. Manual fix:
 set "MSYS2_ARG_CONV_EXCL=/AI;/AL;/OUT;/out"
@@ -16,3 +18,9 @@ FOR /F "delims=" %%i IN ('cygpath.exe -u "%SRC_DIR%"') DO set "SRC_DIR=%%i"
 FOR /F "delims=" %%i IN ('cygpath.exe -u "%STDLIB_DIR%"') DO set "STDLIB_DIR=%%i"
 bash -x %saved_recipe_dir%\build.sh
 if errorlevel 1 exit 1
+exit /b 0
+
+:win_arm64
+set "PKG_NAME=xproto"
+call "%BUILD_PREFIX%\Library\bin\run_autotools_clang_conda_build.bat"
+if errorlevel 1 exit /b 1
