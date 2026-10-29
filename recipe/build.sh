@@ -66,9 +66,10 @@ configure_args=(
 )
 ./configure "${configure_args[@]}"
 
-if [[ "${target_platform:-}" == "win-arm64" ]]; then
-    patch_libtool
-fi
+# This should go here, but this proto package doesn't actually use libtool.
+### if [[ "${target_platform:-}" == "win-arm64" ]]; then
+###     patch_libtool
+### fi
 
 make -j$CPU_COUNT
 make install
