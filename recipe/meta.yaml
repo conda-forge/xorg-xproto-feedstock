@@ -27,7 +27,7 @@ requirements:
     - m2-automake{{ am_version }}   # [win and x86_64]
     - m2-libtool                    # [win and x86_64]
     - pkg-config                    # [unix or (win and arm64)]
-    - m2-pkg-config                 # [win and x86_64]
+    - m2-pkg-config                 # [win]
     - gnuconfig                     # [unix]
     - m2-base                       # [win and x86_64]
     - make                          # [unix]

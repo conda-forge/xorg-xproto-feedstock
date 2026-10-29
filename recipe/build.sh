@@ -2,7 +2,7 @@
 
 set -xe
 
-if [[ "${target_platform:-}" != "win-arm64" ]]; then
+if [[ "${target_platform:-}" != win-* ]]; then
   # Get an updated config.sub and config.guess
   cp $BUILD_PREFIX/share/gnuconfig/config.* .
 fi
